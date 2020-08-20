@@ -1,6 +1,0 @@
-server:
-  port: 8080
-
-spring:
-  thymeleaf:
-    cache: true #关闭thymeleaf缓存

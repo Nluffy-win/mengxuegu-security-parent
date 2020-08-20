@@ -12,7 +12,8 @@ public class MainController {
 
     @RequestMapping({"/index", "/", ""})
     public String index() {
-        return "index";// resources/templates/index.html
+        // resources/templates/index.html
+        return "index";
     }
 
 }
