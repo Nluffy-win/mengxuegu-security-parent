@@ -24,5 +24,6 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         response.setContentType("application/json;charset=UTF-8");
         String json = result.toJsonString();
         response.getWriter().write(json);
+
     }
 }
