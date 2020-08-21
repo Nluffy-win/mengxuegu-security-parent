@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 
@@ -28,15 +29,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsService customUserDetailsService;
     private final AuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final AuthenticationFailureHandler customAuthenticationFailHandler;
 
     public SpringSecurityConfig(SecurityProperties securityProperties,
                                 PasswordEncoder passwordEncoder,
                                 UserDetailsService customUserDetailsService,
-                                AuthenticationSuccessHandler customAuthenticationSuccessHandler) {
+                                AuthenticationSuccessHandler customAuthenticationSuccessHandler,
+                                AuthenticationFailureHandler customAuthenticationFailHandler) {
         this.securityProperties = securityProperties;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
+        this.customAuthenticationFailHandler = customAuthenticationFailHandler;
     }
 
     /**
@@ -82,6 +86,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //返回成功后的认证信息
                 .successHandler(customAuthenticationSuccessHandler)
+                //失败返回的认证信息
+                .failureHandler(customAuthenticationFailHandler)
 
                 .and()
 
