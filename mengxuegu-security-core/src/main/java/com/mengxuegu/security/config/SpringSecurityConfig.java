@@ -8,6 +8,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 
 /**
@@ -18,15 +21,22 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @Slf4j
 @Configuration
-@EnableWebSecurity // 开启springsecurity过滤链 filter
+@EnableWebSecurity  // 开启springsecurity过滤链 filter
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityProperties securityProperties;
-    private final TokenStore tokenStore;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService customUserDetailsService;
+    private final AuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
-    public SpringSecurityConfig(SecurityProperties securityProperties, TokenStore tokenStore) {
+    public SpringSecurityConfig(SecurityProperties securityProperties,
+                                PasswordEncoder passwordEncoder,
+                                UserDetailsService customUserDetailsService,
+                                AuthenticationSuccessHandler customAuthenticationSuccessHandler) {
         this.securityProperties = securityProperties;
-        this.tokenStore = tokenStore;
+        this.passwordEncoder = passwordEncoder;
+        this.customUserDetailsService = customUserDetailsService;
+        this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
     }
 
     /**
@@ -39,10 +49,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // 数据库存储的密码必须是加密后的，不然会报错：There is no PasswordEncoder mapped for the id "null"
-        String password = tokenStore.passwordEncoder().encode("8888");
-        log.info("加密之后存储的密码：" + password);
-        auth.inMemoryAuthentication().withUser("zhaojie")
-                .password(password).authorities("ADMIN");
+//        String password = passwordEncoder.encode("8888");
+//        log.info("加密之后存储的密码：" + password);
+//        auth.inMemoryAuthentication().withUser("zhaojie")
+//                .password(password).authorities("ADMIN");
+        auth.userDetailsService(customUserDetailsService);
 
     }
 
@@ -68,6 +79,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // 默认的是 password
                 .passwordParameter(securityProperties.getAuthentication().getPasswordParameter())
+
+                //返回成功后的认证信息
+                .successHandler(customAuthenticationSuccessHandler)
+
                 .and()
 
                 // 认证请求
