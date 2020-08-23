@@ -10,6 +10,7 @@ mengxuegu:
     authentication:
       loginPage: /login/page # 响应登录界面
       loginProcessingUrl: /login/form #响应提交按钮
+      loginImage: /code/image # 验证码
       usernameParameter: name
       passwordParameter: pwd
       staticPaths:

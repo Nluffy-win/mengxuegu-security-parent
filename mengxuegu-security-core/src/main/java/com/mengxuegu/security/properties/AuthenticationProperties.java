@@ -15,6 +15,7 @@ public class AuthenticationProperties {
     private String loginProcessingUrl = " /login/form";
     private String usernameParameter = "name";
     private String passwordParameter = "pwd";
+    private String loginImage = "/code/image";
     private String[] staticPaths = {"/dist/**", "/modules/**", "/plugins/**"};
     private LoginResponseType loginType = LoginResponseType.REDIRECT;
 

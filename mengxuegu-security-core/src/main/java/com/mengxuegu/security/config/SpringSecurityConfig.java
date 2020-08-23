@@ -1,5 +1,6 @@
 package com.mengxuegu.security.config;
 
+import com.mengxuegu.security.authentication.code.ImageCodeValidateFilter;
 import com.mengxuegu.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 /**
@@ -30,17 +32,20 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService customUserDetailsService;
     private final AuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final AuthenticationFailureHandler customAuthenticationFailHandler;
+    private final ImageCodeValidateFilter imageCodeValidateFilter;
 
     public SpringSecurityConfig(SecurityProperties securityProperties,
                                 PasswordEncoder passwordEncoder,
                                 UserDetailsService customUserDetailsService,
                                 AuthenticationSuccessHandler customAuthenticationSuccessHandler,
-                                AuthenticationFailureHandler customAuthenticationFailHandler) {
+                                AuthenticationFailureHandler customAuthenticationFailHandler,
+                                ImageCodeValidateFilter imageCodeValidateFilter) {
         this.securityProperties = securityProperties;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
         this.customAuthenticationFailHandler = customAuthenticationFailHandler;
+        this.imageCodeValidateFilter = imageCodeValidateFilter;
     }
 
     /**
@@ -72,7 +77,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.httpBasic() // 采用 httpBasic认证方式
-        http.formLogin() // 表单登录方式
+        http
+                //登陆成功交给用户密码拦截器去管理，失败交给失败管理器管理
+                .addFilterBefore(imageCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
+
+                .formLogin() // 表单登录方式
+
                 .loginPage(securityProperties.getAuthentication().getLoginPage())
 
                 // 登录表单提交处理url, 默认是/login
@@ -95,7 +105,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 // 放行/login/page不需要认证可访问
-                .antMatchers(securityProperties.getAuthentication().getLoginPage()).permitAll()
+                .antMatchers(securityProperties.getAuthentication().getLoginPage()
+                        , securityProperties.getAuthentication().getLoginImage()).permitAll()
 
                 //所有访问该应用的http请求都要通过身份认证才可以访问
                 .anyRequest().authenticated()
