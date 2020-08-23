@@ -55,11 +55,11 @@
                 <version>${oauth2-autoconfigure.version}</version>
             </dependency>
             <!-- kaptcha 用于图形验证码 -->
-<!--            <dependency>-->
-<!--                <groupId>com.github.penggle</groupId>-->
-<!--                <artifactId>kaptcha</artifactId>-->
-<!--                <version>${kaptcha.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
+            </dependency>
 <!--            <dependency>-->
 <!--                <groupId>com.github.penggle</groupId>-->
 <!--                <artifactId>kaptcha</artifactId>-->

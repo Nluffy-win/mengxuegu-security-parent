@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * Created by Y_Coffee on 2020/8/21
+ *
  * @author CoffeeY
  */
 @Data
@@ -14,6 +15,8 @@ public class AuthenticationProperties {
     private String loginProcessingUrl = " /login/form";
     private String usernameParameter = "name";
     private String passwordParameter = "pwd";
-    private String[] staticPaths = {"/dist/**","/modules/**","/plugins/**"};
+    private String loginImage = "/code/image";
+    private String[] staticPaths = {"/dist/**", "/modules/**", "/plugins/**"};
+    private LoginResponseType loginType = LoginResponseType.REDIRECT;
 
 }
