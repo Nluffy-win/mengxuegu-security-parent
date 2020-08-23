@@ -16,3 +16,4 @@ mengxuegu:
         - /dist/**
         - /modules/**
         - /plugins/**
+      loginType: REDIRECT # JSON/REDIRECT

@@ -84,7 +84,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 默认的是 password
                 .passwordParameter(securityProperties.getAuthentication().getPasswordParameter())
 
-                //返回成功后的认证信息
+                //成功后的认证信息
                 .successHandler(customAuthenticationSuccessHandler)
                 //失败返回的认证信息
                 .failureHandler(customAuthenticationFailHandler)
