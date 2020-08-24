@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 
 
 /**
@@ -33,20 +34,34 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final AuthenticationFailureHandler customAuthenticationFailHandler;
     private final ImageCodeValidateFilter imageCodeValidateFilter;
+    private final JdbcTokenRepositoryImpl jdbcTokenRepository;
 
     public SpringSecurityConfig(SecurityProperties securityProperties,
                                 PasswordEncoder passwordEncoder,
                                 UserDetailsService customUserDetailsService,
                                 AuthenticationSuccessHandler customAuthenticationSuccessHandler,
                                 AuthenticationFailureHandler customAuthenticationFailHandler,
-                                ImageCodeValidateFilter imageCodeValidateFilter) {
+                                ImageCodeValidateFilter imageCodeValidateFilter,
+                                JdbcTokenRepositoryImpl jdbcTokenRepository) {
         this.securityProperties = securityProperties;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
         this.customAuthenticationSuccessHandler = customAuthenticationSuccessHandler;
         this.customAuthenticationFailHandler = customAuthenticationFailHandler;
         this.imageCodeValidateFilter = imageCodeValidateFilter;
+        this.jdbcTokenRepository = jdbcTokenRepository;
     }
+
+
+//    @Bean
+//    public JdbcTokenRepositoryImpl jdbcTokenRepository() {
+//        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+//        jdbcTokenRepository.setDataSource(dataSource);
+//        //执行一次自动创表，security自带功能
+//        jdbcTokenRepository.setCreateTableOnStartup(true);
+//        return jdbcTokenRepository;
+//    }
+
 
     /**
      * 认证管理器：
@@ -110,6 +125,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //所有访问该应用的http请求都要通过身份认证才可以访问
                 .anyRequest().authenticated()
+
+                .and()
+
+                //记住我功能
+                .rememberMe()
+
+                //保存登录信息
+                .tokenRepository(jdbcTokenRepository)
+
+                //设置有效时长
+                .tokenValiditySeconds(60 * 60 * 24)
         ; // 注意不要少了分号
     }
 

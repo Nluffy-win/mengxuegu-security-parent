@@ -9,19 +9,15 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 /**
- * @Classname KaptchalImageConfig * @Description
- * TODO * @Date 2020/8/23 16:28 * @Created by John
+ * 使用第三方Kaptcha来生成图形验证码
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Configuration
-public class KaptchalImageConfig {
+public class KaptchaImageCodeConfig {
 
-    /**
-     * 生成验证码配置类
-     *
-     * @return
-     */
+
     @Bean
-    public DefaultKaptcha getDefaultKaptcha() {
+    public DefaultKaptcha getDefaultKaptcha(){
         DefaultKaptcha defaultKaptcha = new DefaultKaptcha();
         Properties properties = new Properties();
         properties.setProperty(Constants.KAPTCHA_BORDER, "yes");
@@ -31,7 +27,8 @@ public class KaptchalImageConfig {
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_COLOR, "blue");
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_SIZE, "28");
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_NAMES, "宋体");
-        properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4"); // 图片效果
+        properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
+        // 图片效果
         properties.setProperty(Constants.KAPTCHA_OBSCURIFICATOR_IMPL, "com.google.code.kaptcha.impl.ShadowGimpy");
         Config config = new Config(properties);
         defaultKaptcha.setConfig(config);

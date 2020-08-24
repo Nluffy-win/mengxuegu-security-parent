@@ -1,5 +1,6 @@
 package com.mengxuegu.security.Controller;
 
+
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -41,11 +42,11 @@ public class CustomLoginController {
         log.info("获取验证码的字符串:" + code);
 
         //把字符串写进session中
-        request.getSession().setAttribute("SESSION_KEY", code);
+        request.getSession().setAttribute(SESSION_KEY, code);
         //获取图片验证码
         BufferedImage image = defaultKaptcha.createImage(code);
         //把图片验证码写出来
         ServletOutputStream out = response.getOutputStream();
-        ImageIO.write(image, "jsp", out);
+        ImageIO.write(image, "jpg", out);
     }
 }
