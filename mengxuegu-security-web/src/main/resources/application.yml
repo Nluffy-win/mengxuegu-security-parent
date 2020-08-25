@@ -24,3 +24,6 @@ mengxuegu:
         - /modules/**
         - /plugins/**
       loginType: REDIRECT # JSON/REDIRECT
+      loginMobile: /mobile/page # 登录手机验证码页面
+      codeMobile: /code/mobile # 发送验证码
+      loginForm: /login/form  # 提交手机验证码页面的登录按钮

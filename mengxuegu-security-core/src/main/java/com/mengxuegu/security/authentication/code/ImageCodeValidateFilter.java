@@ -6,7 +6,6 @@ import com.mengxuegu.security.authentication.CustomAuthenticationFailHandler;
 import com.mengxuegu.security.authentication.exception.ValidateCodeException;
 import com.mengxuegu.security.properties.SecurityProperties;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -25,11 +24,16 @@ import java.io.IOException;
 @Component("imageCodeValidateFilter")
 public class ImageCodeValidateFilter extends OncePerRequestFilter {
 
-    @Autowired
-    SecurityProperties securityProperties;
+    private final SecurityProperties securityProperties;
 
-    @Autowired
-    CustomAuthenticationFailHandler customAuthenticationFailHandler;
+    private final CustomAuthenticationFailHandler customAuthenticationFailHandler;
+
+    public ImageCodeValidateFilter(SecurityProperties securityProperties,
+                                   CustomAuthenticationFailHandler customAuthenticationFailHandler) {
+        this.securityProperties = securityProperties;
+        this.customAuthenticationFailHandler = customAuthenticationFailHandler;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
           HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

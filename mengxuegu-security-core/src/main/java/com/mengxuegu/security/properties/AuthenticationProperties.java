@@ -16,6 +16,9 @@ public class AuthenticationProperties {
     private String usernameParameter = "name";
     private String passwordParameter = "pwd";
     private String loginImage = "/code/image";
+    private String loginMoblie = "/mobile/page";
+    private String codeMobile = "/code/mobile";
+    private String loginForm = "/login/form";
     private String[] staticPaths = {"/dist/**", "/modules/**", "/plugins/**"};
     private LoginResponseType loginType = LoginResponseType.REDIRECT;
 
