@@ -4,6 +4,7 @@ import com.mengxuegu.security.Controller.CustomLoginController;
 import com.mengxuegu.security.authentication.CustomAuthenticationFailHandler;
 import com.mengxuegu.security.authentication.exception.ValidateCodeException;
 import com.mengxuegu.security.properties.SecurityProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.io.IOException;
  *
  * @author CoffeeY
  */
+@Slf4j
 @Component("MobileValidateFilter")
 public class MobileValidateFilter extends OncePerRequestFilter {
 
@@ -55,7 +57,9 @@ public class MobileValidateFilter extends OncePerRequestFilter {
 
     private void validate(HttpServletRequest request) {
         //获取短信验证码
+        log.info("验证码转换object：" + request.getSession().getAttribute(CustomLoginController.SESSION_MOBILE));
         String code = (String) request.getSession().getAttribute(CustomLoginController.SESSION_MOBILE);
+        log.info("验证码转换String：" + code);
         //获取用户输入的验证码
         String inputCode = request.getParameter("code");
         if (StringUtils.isBlank(inputCode)){

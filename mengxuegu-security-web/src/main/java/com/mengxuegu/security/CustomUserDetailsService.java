@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 /**
  * 查询数据库中的用户信息
  * Created by Y_Coffee on 2020/8/21
+ * @author CoffeeY
  */
 @Slf4j
 @Component("customUserDetailsService")
