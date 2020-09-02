@@ -3,8 +3,8 @@ package com.mengxuegu.security.authentication.mobile;
 import com.mengxuegu.security.Controller.MobileLoginController;
 import com.mengxuegu.security.authentication.CustomAuthenticationFailHandler;
 import com.mengxuegu.security.authentication.exception.ValidateCodeException;
+import com.mengxuegu.security.properties.SecurityProperties;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,26 +17,33 @@ import java.io.IOException;
 
 /**
  * 校验用户输入的手机验证码是否正确
+ *
  * @author CoffeeY
  * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Component // 不要少了
 public class MobileValidateFilter extends OncePerRequestFilter {
 
+    private final SecurityProperties securityProperties;
+    private final CustomAuthenticationFailHandler customAuthenticationFailHandler;
 
-    @Autowired
-    CustomAuthenticationFailHandler customAuthenticationFailHandler;
+    public MobileValidateFilter(SecurityProperties securityProperties,
+                                CustomAuthenticationFailHandler customAuthenticationFailHandler) {
+        this.securityProperties = securityProperties;
+        this.customAuthenticationFailHandler = customAuthenticationFailHandler;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String mobileForm = securityProperties.getAuthentication().getMobileForm();
         // 1. 判断 请求是否为手机登录，且post请求
-        if("/mobile/form".equals(request.getRequestURI())
-            && "post".equalsIgnoreCase(request.getMethod())) {
+        if (mobileForm.equals(request.getRequestURI())
+                && "post".equalsIgnoreCase(request.getMethod())) {
             try {
                 // 校验验证码合法性
                 validate(request);
-            }catch (AuthenticationException e) {
+            } catch (AuthenticationException e) {
                 // 交给失败处理器进行处理异常
                 customAuthenticationFailHandler.onAuthenticationFailure(request, response, e);
                 // 一定要记得结束
@@ -50,15 +57,15 @@ public class MobileValidateFilter extends OncePerRequestFilter {
     private void validate(HttpServletRequest request) {
         // 先获取seesion中的验证码
         String sessionCode =
-                (String)request.getSession().getAttribute(MobileLoginController.SESSION_KEY);
+                (String) request.getSession().getAttribute(MobileLoginController.SESSION_KEY);
         // 获取用户输入的验证码
         String inpuCode = request.getParameter("code");
         // 判断是否正确
-        if(StringUtils.isBlank(inpuCode)) {
+        if (StringUtils.isBlank(inpuCode)) {
             throw new ValidateCodeException("验证码不能为空");
         }
 
-        if(!inpuCode.equalsIgnoreCase(sessionCode)) {
+        if (!inpuCode.equalsIgnoreCase(sessionCode)) {
             throw new ValidateCodeException("验证码输入错误");
         }
     }

@@ -4,9 +4,9 @@ import com.mengxuegu.base.result.MengxueguResult;
 import com.mengxuegu.security.properties.LoginResponseType;
 import com.mengxuegu.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Security;
 
 /**
  * @Classname CustomAuthenticationFailHandler * @Description TODO * @Date 2020/8/21 21:41 * @Created by John
@@ -45,7 +44,14 @@ public class CustomAuthenticationFailHandler extends SimpleUrlAuthenticationFail
             response.getWriter().write(json);
         } else {
             //重定向地址
-            super.setDefaultFailureUrl(securityProperties.getAuthentication().getLoginPage() + "?error");
+            //super.setDefaultFailureUrl(securityProperties.getAuthentication().getLoginPage() + "?error");
+            //获取上一次路径
+            String referer = request.getHeader("Referer");
+            log.info("referer：" + referer);
+            //从上一次路径中截取？之前
+            String lastUrl = StringUtils.substringBefore(referer, "?");
+            log.info("上一次提交的路径：" + lastUrl);
+            super.setDefaultFailureUrl(lastUrl + "?error");
             super.onAuthenticationFailure(request, response, e);
         }
 
