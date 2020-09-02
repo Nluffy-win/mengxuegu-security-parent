@@ -2,13 +2,10 @@ package com.mengxuegu.security.Controller;
 
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
-import com.mengxuegu.base.result.MengxueguResult;
 import com.mengxuegu.security.authentication.mobile.SmsSend;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -57,32 +54,32 @@ public class  CustomLoginController {
         ImageIO.write(image, "jpg", out);
     }
 
-    /**
-     * 登录手机短信登录界面
-     *
-     * @return
-     */
-    @RequestMapping("/mobile/page")
-    public String toMobliePage() {
-        return "login-mobile";
-    }
-
-    /**
-     * 发送短信验证码
-     *
-     * @return
-     */
-    @ResponseBody //响应json
-    @RequestMapping("/code/mobile")
-    public MengxueguResult code(HttpServletRequest request) {
-        //生成一个随机验证码
-        String code = RandomStringUtils.randomNumeric(4);
-        //放入session中方便过滤器校验
-        request.getSession().setAttribute(SESSION_MOBILE, code);
-        //获取手机号
-        String mobile = request.getParameter("mobile");
-        //发送信息到手机验证到手机号上
-        smsSend.sendSms(mobile,code);
-        return MengxueguResult.ok();
-    }
+//    /**
+//     * 登录手机短信登录界面
+//     *
+//     * @return
+//     */
+//    @RequestMapping("/mobile/page")
+//    public String toMobilePage() {
+//        return "login-mobile";
+//    }
+//
+//    /**
+//     * 发送短信验证码
+//     *
+//     * @return
+//     */
+//    @ResponseBody //响应json
+//    @RequestMapping("/code/mobile")
+//    public MengxueguResult code(HttpServletRequest request) {
+//        //生成一个随机验证码
+//        String code = RandomStringUtils.randomNumeric(4);
+//        //放入session中方便过滤器校验
+//        request.getSession().setAttribute(SESSION_MOBILE, code);
+//        //获取手机号
+//        String mobile = request.getParameter("mobile");
+//        //发送信息到手机验证到手机号上
+//        smsSend.sendSms(mobile,code);
+//        return MengxueguResult.ok();
+//    }
 }

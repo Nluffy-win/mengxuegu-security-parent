@@ -4,6 +4,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import javax.servlet.http.HttpServletRequest;
@@ -77,5 +78,8 @@ public class MobileAuthenticationFilter extends AbstractAuthenticationProcessing
 
     public void setMobileParameter(String mobileParameter) {
         this.mobileParameter = mobileParameter;
+    }
+
+    public void setDetails(UserDetailsService mobileUserDetailsService) {
     }
 }

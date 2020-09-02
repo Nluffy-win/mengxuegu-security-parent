@@ -25,7 +25,7 @@ public class MobileAuthenticationToken extends AbstractAuthenticationToken {
      * 认证之前，
      *
      * @param principal 手机号码
-     *                  setAuthenticated 未认证
+     * setAuthenticated 未认证
      */
     public MobileAuthenticationToken(Object principal) {
         super(null);

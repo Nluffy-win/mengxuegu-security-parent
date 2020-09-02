@@ -15,10 +15,10 @@ public class AuthenticationProperties {
     private String loginProcessingUrl = " /login/form";
     private String usernameParameter = "name";
     private String passwordParameter = "pwd";
-    private String loginImage = "/code/image";
-    private String loginMoblie = "/mobile/page";
+    private String codeImage = "/code/image";
+    private String mobilePage = "/mobile/page";
     private String codeMobile = "/code/mobile";
-    private String loginForm = "/login/form";
+    private String mobileForm = "/mobile/form";
     private String[] staticPaths = {"/dist/**", "/modules/**", "/plugins/**"};
     private LoginResponseType loginType = LoginResponseType.REDIRECT;
 

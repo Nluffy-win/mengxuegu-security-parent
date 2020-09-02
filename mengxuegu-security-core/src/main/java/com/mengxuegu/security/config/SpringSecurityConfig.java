@@ -1,6 +1,8 @@
 package com.mengxuegu.security.config;
 
 import com.mengxuegu.security.authentication.code.ImageCodeValidateFilter;
+import com.mengxuegu.security.authentication.mobile.MobileAuthenticationConfig;
+import com.mengxuegu.security.authentication.mobile.MobileValidateFilter;
 import com.mengxuegu.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +37,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationFailureHandler customAuthenticationFailHandler;
     private final ImageCodeValidateFilter imageCodeValidateFilter;
     private final JdbcTokenRepositoryImpl jdbcTokenRepository;
+    private final MobileValidateFilter mobileValidateFilter;
+    private final MobileAuthenticationConfig mobileAuthenticationConfig;
 
     public SpringSecurityConfig(SecurityProperties securityProperties,
                                 PasswordEncoder passwordEncoder,
@@ -42,7 +46,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                                 AuthenticationSuccessHandler customAuthenticationSuccessHandler,
                                 AuthenticationFailureHandler customAuthenticationFailHandler,
                                 ImageCodeValidateFilter imageCodeValidateFilter,
-                                JdbcTokenRepositoryImpl jdbcTokenRepository) {
+                                JdbcTokenRepositoryImpl jdbcTokenRepository,
+                                MobileValidateFilter mobileValidateFilter,
+                                MobileAuthenticationConfig mobileAuthenticationConfig) {
         this.securityProperties = securityProperties;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
@@ -50,6 +56,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         this.customAuthenticationFailHandler = customAuthenticationFailHandler;
         this.imageCodeValidateFilter = imageCodeValidateFilter;
         this.jdbcTokenRepository = jdbcTokenRepository;
+        this.mobileValidateFilter = mobileValidateFilter;
+        this.mobileAuthenticationConfig = mobileAuthenticationConfig;
     }
 
 
@@ -93,6 +101,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 //        http.httpBasic() // 采用 httpBasic认证方式
         http
+                .addFilterBefore(mobileValidateFilter, UsernamePasswordAuthenticationFilter.class)
+
                 //登陆成功交给用户密码拦截器去管理，失败交给失败管理器管理
                 .addFilterBefore(imageCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
 
@@ -120,9 +130,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 // 放行/login/page不需要认证可访问
-                .antMatchers(securityProperties.getAuthentication().getLoginPage()
-                        , securityProperties.getAuthentication().getLoginImage(),
-                        securityProperties.getAuthentication().getLoginMoblie(),
+                .antMatchers(securityProperties.getAuthentication().getLoginPage(),
+                        securityProperties.getAuthentication().getCodeImage(),
+                        securityProperties.getAuthentication().getMobilePage(),
                         securityProperties.getAuthentication().getCodeMobile()).permitAll()
 
                 //所有访问该应用的http请求都要通过身份认证才可以访问
@@ -139,6 +149,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 //设置有效时长
                 .tokenValiditySeconds(60 * 60 * 24)
         ; // 注意不要少了分号
+
+        //将手机验证添加到过滤连上
+        http.apply(mobileAuthenticationConfig);
     }
 
     /**

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 
 /**
  * 手机认证处理的提供者
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * @author CoffeeY
  */
 @Slf4j
+@Component("mobileAuthenticationProvider")
 public class MobileAuthenticationProvider implements AuthenticationProvider {
 
     private UserDetailsService userDetailsService;
