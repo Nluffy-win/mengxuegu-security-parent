@@ -27,3 +27,4 @@ mengxuegu:
       mobilePage: /mobile/page # 登录手机验证码页面
       codeMobile: /code/mobile # 发送验证码
       mobileForm: /mobile/form  # 提交手机验证码页面的登录按钮
+      tokenValiditySeconds: 604800 # 记住我的有效时长

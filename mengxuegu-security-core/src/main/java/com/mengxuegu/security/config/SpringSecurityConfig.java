@@ -3,6 +3,7 @@ package com.mengxuegu.security.config;
 import com.mengxuegu.security.authentication.code.ImageCodeValidateFilter;
 import com.mengxuegu.security.authentication.mobile.MobileAuthenticationConfig;
 import com.mengxuegu.security.authentication.mobile.MobileValidateFilter;
+import com.mengxuegu.security.properties.AuthenticationProperties;
 import com.mengxuegu.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import org.springframework.security.web.authentication.rememberme.JdbcTokenRepos
  * alt+/ 导包
  * ctrl+o 覆盖
  *
+ * @author CoffeeY
  * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Slf4j
@@ -100,6 +102,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.httpBasic() // 采用 httpBasic认证方式
+
+        //声明一个统一变量
+        AuthenticationProperties authentication = securityProperties.getAuthentication();
+
         http
                 .addFilterBefore(mobileValidateFilter, UsernamePasswordAuthenticationFilter.class)
 
@@ -108,16 +114,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .formLogin() // 表单登录方式
 
-                .loginPage(securityProperties.getAuthentication().getLoginPage())
+                .loginPage(authentication.getLoginPage())
 
                 // 登录表单提交处理url, 默认是/login
-                .loginProcessingUrl(securityProperties.getAuthentication().getLoginProcessingUrl())
+                .loginProcessingUrl(authentication.getLoginProcessingUrl())
 
                 //默认的是 username
-                .usernameParameter(securityProperties.getAuthentication().getUsernameParameter())
+                .usernameParameter(authentication.getUsernameParameter())
 
                 // 默认的是 password
-                .passwordParameter(securityProperties.getAuthentication().getPasswordParameter())
+                .passwordParameter(authentication.getPasswordParameter())
 
                 //成功后的认证信息
                 .successHandler(customAuthenticationSuccessHandler)
@@ -130,10 +136,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 // 放行/login/page不需要认证可访问
-                .antMatchers(securityProperties.getAuthentication().getLoginPage(),
-                        securityProperties.getAuthentication().getCodeImage(),
-                        securityProperties.getAuthentication().getMobilePage(),
-                        securityProperties.getAuthentication().getCodeMobile()).permitAll()
+                .antMatchers(authentication.getLoginPage(),
+                        authentication.getCodeImage(),
+                        authentication.getMobilePage(),
+                        authentication.getCodeMobile()).permitAll()
 
                 //所有访问该应用的http请求都要通过身份认证才可以访问
                 .anyRequest().authenticated()
@@ -147,7 +153,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenRepository(jdbcTokenRepository)
 
                 //设置有效时长
-                .tokenValiditySeconds(60 * 60 * 24)
+                .tokenValiditySeconds(authentication.getTokenValiditySeconds())
         ; // 注意不要少了分号
 
         //将手机验证添加到过滤连上
