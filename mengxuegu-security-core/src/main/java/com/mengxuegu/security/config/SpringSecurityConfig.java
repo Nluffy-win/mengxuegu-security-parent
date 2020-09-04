@@ -1,6 +1,9 @@
 package com.mengxuegu.security.config;
 
 import com.mengxuegu.security.authentication.code.ImageCodeValidateFilter;
+import com.mengxuegu.security.authentication.mobile.MobileAuthenticationConfig;
+import com.mengxuegu.security.authentication.mobile.MobileValidateFilter;
+import com.mengxuegu.security.properties.AuthenticationProperties;
 import com.mengxuegu.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -15,12 +18,15 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.session.InvalidSessionStrategy;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 
 /**
  * alt+/ 导包
  * ctrl+o 覆盖
  *
+ * @author CoffeeY
  * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Slf4j
@@ -35,6 +41,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationFailureHandler customAuthenticationFailHandler;
     private final ImageCodeValidateFilter imageCodeValidateFilter;
     private final JdbcTokenRepositoryImpl jdbcTokenRepository;
+    private final MobileValidateFilter mobileValidateFilter;
+    private final MobileAuthenticationConfig mobileAuthenticationConfig;
+    private final InvalidSessionStrategy invalidSessionStrategy;
+    private final SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
     public SpringSecurityConfig(SecurityProperties securityProperties,
                                 PasswordEncoder passwordEncoder,
@@ -42,7 +52,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                                 AuthenticationSuccessHandler customAuthenticationSuccessHandler,
                                 AuthenticationFailureHandler customAuthenticationFailHandler,
                                 ImageCodeValidateFilter imageCodeValidateFilter,
-                                JdbcTokenRepositoryImpl jdbcTokenRepository) {
+                                JdbcTokenRepositoryImpl jdbcTokenRepository,
+                                MobileValidateFilter mobileValidateFilter,
+                                MobileAuthenticationConfig mobileAuthenticationConfig, InvalidSessionStrategy invalidSessionStrategy, SessionInformationExpiredStrategy sessionInformationExpiredStrategy) {
         this.securityProperties = securityProperties;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
@@ -50,6 +62,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         this.customAuthenticationFailHandler = customAuthenticationFailHandler;
         this.imageCodeValidateFilter = imageCodeValidateFilter;
         this.jdbcTokenRepository = jdbcTokenRepository;
+        this.mobileValidateFilter = mobileValidateFilter;
+        this.mobileAuthenticationConfig = mobileAuthenticationConfig;
+        this.invalidSessionStrategy = invalidSessionStrategy;
+        this.sessionInformationExpiredStrategy = sessionInformationExpiredStrategy;
     }
 
 
@@ -92,22 +108,28 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 //        http.httpBasic() // 采用 httpBasic认证方式
+
+        //声明一个统一变量
+        AuthenticationProperties authentication = securityProperties.getAuthentication();
+
         http
+                .addFilterBefore(mobileValidateFilter, UsernamePasswordAuthenticationFilter.class)
+
                 //登陆成功交给用户密码拦截器去管理，失败交给失败管理器管理
                 .addFilterBefore(imageCodeValidateFilter, UsernamePasswordAuthenticationFilter.class)
 
                 .formLogin() // 表单登录方式
 
-                .loginPage(securityProperties.getAuthentication().getLoginPage())
+                .loginPage(authentication.getLoginPage())
 
                 // 登录表单提交处理url, 默认是/login
-                .loginProcessingUrl(securityProperties.getAuthentication().getLoginProcessingUrl())
+                .loginProcessingUrl(authentication.getLoginProcessingUrl())
 
                 //默认的是 username
-                .usernameParameter(securityProperties.getAuthentication().getUsernameParameter())
+                .usernameParameter(authentication.getUsernameParameter())
 
                 // 默认的是 password
-                .passwordParameter(securityProperties.getAuthentication().getPasswordParameter())
+                .passwordParameter(authentication.getPasswordParameter())
 
                 //成功后的认证信息
                 .successHandler(customAuthenticationSuccessHandler)
@@ -120,8 +142,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 
                 // 放行/login/page不需要认证可访问
-                .antMatchers(securityProperties.getAuthentication().getLoginPage()
-                        , securityProperties.getAuthentication().getLoginImage()).permitAll()
+                .antMatchers(authentication.getLoginPage(),
+                        authentication.getCodeImage(),
+                        authentication.getMobilePage(),
+                        authentication.getCodeMobile()).permitAll()
 
                 //所有访问该应用的http请求都要通过身份认证才可以访问
                 .anyRequest().authenticated()
@@ -135,8 +159,29 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenRepository(jdbcTokenRepository)
 
                 //设置有效时长
-                .tokenValiditySeconds(60 * 60 * 24)
+                .tokenValiditySeconds(authentication.getTokenValiditySeconds())
+
+                .and()
+
+                //session管理
+                .sessionManagement()
+
+                //设置失效后的返回
+                .invalidSessionStrategy(invalidSessionStrategy)
+
+                //设置session最大数
+                .maximumSessions(1)
+
+                //session超过最大数后的处理方式(踢掉上一个登录)
+                .expiredSessionStrategy(sessionInformationExpiredStrategy)
+
+                //当session超过最大数，开启功能(禁止另一台访问)
+                .maxSessionsPreventsLogin(true)
+                ;
         ; // 注意不要少了分号
+
+        //将手机验证添加到过滤连上
+        http.apply(mobileAuthenticationConfig);
     }
 
     /**

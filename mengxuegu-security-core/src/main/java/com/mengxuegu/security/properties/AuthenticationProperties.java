@@ -12,11 +12,28 @@ public class AuthenticationProperties {
 
 
     private String loginPage = "/login/page";
+
     private String loginProcessingUrl = " /login/form";
+
     private String usernameParameter = "name";
+
     private String passwordParameter = "pwd";
-    private String loginImage = "/code/image";
+
+    private String codeImage = "/code/image";
+
+    private String mobilePage = "/mobile/page";
+
+    private String codeMobile = "/code/mobile";
+
+    private String mobileForm = "/mobile/form";
+    /**
+     * 设置默认值，防止在没写入情况下出错
+     */
+    private Integer tokenValiditySeconds = 60 * 60 * 24 * 7;
+
     private String[] staticPaths = {"/dist/**", "/modules/**", "/plugins/**"};
+
     private LoginResponseType loginType = LoginResponseType.REDIRECT;
+
 
 }
