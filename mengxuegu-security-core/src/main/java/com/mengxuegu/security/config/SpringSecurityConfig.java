@@ -18,6 +18,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.session.InvalidSessionStrategy;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 
 /**
@@ -41,6 +43,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JdbcTokenRepositoryImpl jdbcTokenRepository;
     private final MobileValidateFilter mobileValidateFilter;
     private final MobileAuthenticationConfig mobileAuthenticationConfig;
+    private final InvalidSessionStrategy invalidSessionStrategy;
+    private final SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
 
     public SpringSecurityConfig(SecurityProperties securityProperties,
                                 PasswordEncoder passwordEncoder,
@@ -50,7 +54,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                                 ImageCodeValidateFilter imageCodeValidateFilter,
                                 JdbcTokenRepositoryImpl jdbcTokenRepository,
                                 MobileValidateFilter mobileValidateFilter,
-                                MobileAuthenticationConfig mobileAuthenticationConfig) {
+                                MobileAuthenticationConfig mobileAuthenticationConfig, InvalidSessionStrategy invalidSessionStrategy, SessionInformationExpiredStrategy sessionInformationExpiredStrategy) {
         this.securityProperties = securityProperties;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
@@ -60,6 +64,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         this.jdbcTokenRepository = jdbcTokenRepository;
         this.mobileValidateFilter = mobileValidateFilter;
         this.mobileAuthenticationConfig = mobileAuthenticationConfig;
+        this.invalidSessionStrategy = invalidSessionStrategy;
+        this.sessionInformationExpiredStrategy = sessionInformationExpiredStrategy;
     }
 
 
@@ -154,6 +160,24 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //设置有效时长
                 .tokenValiditySeconds(authentication.getTokenValiditySeconds())
+
+                .and()
+
+                //session管理
+                .sessionManagement()
+
+                //设置失效后的返回
+                .invalidSessionStrategy(invalidSessionStrategy)
+
+                //设置session最大数
+                .maximumSessions(1)
+
+                //session超过最大数后的处理方式(踢掉上一个登录)
+                .expiredSessionStrategy(sessionInformationExpiredStrategy)
+
+                //当session超过最大数，开启功能(禁止另一台访问)
+                .maxSessionsPreventsLogin(true)
+                ;
         ; // 注意不要少了分号
 
         //将手机验证添加到过滤连上

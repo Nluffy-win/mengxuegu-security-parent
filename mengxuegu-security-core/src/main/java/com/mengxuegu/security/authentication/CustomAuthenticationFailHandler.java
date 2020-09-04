@@ -48,8 +48,17 @@ public class CustomAuthenticationFailHandler extends SimpleUrlAuthenticationFail
             //获取上一次路径
             String referer = request.getHeader("Referer");
             log.info("referer：" + referer);
-            //从上一次路径中截取？之前
-            String lastUrl = StringUtils.substringBefore(referer, "?");
+
+            //获取自定义session值
+            Object toAuthentication = request.getAttribute("toAuthentication");
+
+            //如果有值，证明是session超过最大数，没值证明登录出错
+            String lastUrl = toAuthentication != null ? securityProperties.getAuthentication().getLoginPage()
+
+                    //从上一次路径中截取？之前
+                    : StringUtils.substringBefore(referer, "?");
+
+            //String lastUrl = StringUtils.substringBefore(referer, "?");
             log.info("上一次提交的路径：" + lastUrl);
             super.setDefaultFailureUrl(lastUrl + "?error");
             super.onAuthenticationFailure(request, response, e);
