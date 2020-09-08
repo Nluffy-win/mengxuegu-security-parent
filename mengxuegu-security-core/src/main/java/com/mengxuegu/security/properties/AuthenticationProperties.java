@@ -26,6 +26,8 @@ public class AuthenticationProperties {
     private String codeMobile = "/code/mobile";
 
     private String mobileForm = "/mobile/form";
+
+    private String userLogout = "/user/logout";
     /**
      * 设置默认值，防止在没写入情况下出错
      */

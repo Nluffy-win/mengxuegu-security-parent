@@ -186,14 +186,27 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 //session超过最大数后的处理方式(踢掉上一个登录)
                 .expiredSessionStrategy(sessionInformationExpiredStrategy)
 
-                //当session超过最大数，开启功能(禁止另一台访问)
-                .maxSessionsPreventsLogin(true)
+                //当session超过最大数，开启功能(禁止另一台访问)，一般不开启
+                //.maxSessionsPreventsLogin(true)
 
                 //退出管理
                 .sessionRegistry(sessionRegistry)
+
                 .and()
                 .and()
-                .logout().addLogoutHandler(customLogoutHandler)
+                .logout()
+
+                //退出后清除缓存
+                .addLogoutHandler(customLogoutHandler)
+
+                //退出后跳转的路径
+                .logoutSuccessUrl(authentication.getMobilePage())
+
+                //退出路径
+                .logoutUrl(authentication.getUserLogout())
+
+                //退出后删除什么cookie
+                .deleteCookies("JSESSIONID")
 
         ;
         ; // 注意不要少了分号
