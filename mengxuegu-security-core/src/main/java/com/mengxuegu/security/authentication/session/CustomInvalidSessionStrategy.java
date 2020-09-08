@@ -3,6 +3,7 @@ package com.mengxuegu.security.authentication.session;
 
 import com.mengxuegu.base.result.MengxueguResult;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 
 import javax.servlet.http.Cookie;
@@ -17,6 +18,13 @@ import java.io.IOException;
  * @author CoffeeY
  */
 public class CustomInvalidSessionStrategy implements InvalidSessionStrategy {
+
+    private final SessionRegistry sessionRegistry;
+
+    public CustomInvalidSessionStrategy(SessionRegistry sessionRegistry) {
+        this.sessionRegistry = sessionRegistry;
+    }
+
     @Override
     public void onInvalidSessionDetected(HttpServletRequest request, HttpServletResponse response) throws IOException {
         MengxueguResult result = MengxueguResult.build(
@@ -24,8 +32,10 @@ public class CustomInvalidSessionStrategy implements InvalidSessionStrategy {
         response.setContentType("application/json;charset=utf-8");
         response.getWriter().write(result.toJsonString());
 
+        sessionRegistry.removeSessionInformation(request.getRequestedSessionId());
+
         //删除浏览器的cookie
-        cancelCookie(request,response);
+        cancelCookie(request, response);
     }
 
     protected void cancelCookie(HttpServletRequest request, HttpServletResponse response) {

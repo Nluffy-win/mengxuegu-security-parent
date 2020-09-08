@@ -12,11 +12,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
@@ -45,6 +47,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final MobileAuthenticationConfig mobileAuthenticationConfig;
     private final InvalidSessionStrategy invalidSessionStrategy;
     private final SessionInformationExpiredStrategy sessionInformationExpiredStrategy;
+    private final LogoutHandler CustomLogoutHandler;
+    private final SessionRegistry sessionRegistry;
+    private final LogoutHandler customLogoutHandler;
 
     public SpringSecurityConfig(SecurityProperties securityProperties,
                                 PasswordEncoder passwordEncoder,
@@ -54,7 +59,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                                 ImageCodeValidateFilter imageCodeValidateFilter,
                                 JdbcTokenRepositoryImpl jdbcTokenRepository,
                                 MobileValidateFilter mobileValidateFilter,
-                                MobileAuthenticationConfig mobileAuthenticationConfig, InvalidSessionStrategy invalidSessionStrategy, SessionInformationExpiredStrategy sessionInformationExpiredStrategy) {
+                                MobileAuthenticationConfig mobileAuthenticationConfig,
+                                InvalidSessionStrategy invalidSessionStrategy,
+                                SessionInformationExpiredStrategy sessionInformationExpiredStrategy,
+                                LogoutHandler customLogoutHandler, SessionRegistry sessionRegistry, LogoutHandler customLogoutHandler1) {
         this.securityProperties = securityProperties;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
@@ -66,6 +74,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         this.mobileAuthenticationConfig = mobileAuthenticationConfig;
         this.invalidSessionStrategy = invalidSessionStrategy;
         this.sessionInformationExpiredStrategy = sessionInformationExpiredStrategy;
+        this.CustomLogoutHandler = customLogoutHandler;
+        this.sessionRegistry = sessionRegistry;
+        this.customLogoutHandler = customLogoutHandler1;
     }
 
 
@@ -177,8 +188,18 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //当session超过最大数，开启功能(禁止另一台访问)
                 .maxSessionsPreventsLogin(true)
-                ;
+
+                //退出管理
+                .sessionRegistry(sessionRegistry)
+                .and()
+                .and()
+                .logout().addLogoutHandler(customLogoutHandler)
+
+        ;
         ; // 注意不要少了分号
+
+        //关闭跨站伪造，因为当前是get退出系统请求，security防止跨站，退出必须是post请求，关闭后解放限制
+        http.csrf().disable();
 
         //将手机验证添加到过滤连上
         http.apply(mobileAuthenticationConfig);
@@ -194,4 +215,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers(securityProperties.getAuthentication().getStaticPaths());
     }
+
+//    @Bean
+//    public SessionRegistry sessionRegistry(){
+//        return new SessionRegistryImpl();
+//    }
 }
