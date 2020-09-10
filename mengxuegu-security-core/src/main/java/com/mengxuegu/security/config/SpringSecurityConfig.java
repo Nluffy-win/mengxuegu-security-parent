@@ -7,6 +7,7 @@ import com.mengxuegu.security.properties.AuthenticationProperties;
 import com.mengxuegu.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -157,6 +158,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         authentication.getCodeImage(),
                         authentication.getMobilePage(),
                         authentication.getCodeMobile()).permitAll()
+
+                //匹配路径需要有什么类型权限访问
+                .antMatchers("/user").hasAuthority("sys:user")
+                //匹配路径，请求方式，有什么权限可以访问
+                .antMatchers(HttpMethod.GET,"/role").hasAuthority("sys:role")
+                //匹配路径，包含哪一种权限之一就可以访问，hasAnyRole系统默认加ROLE_,所以权限也需要加ROLE，hasAuthority不会加
+                .antMatchers("/permission")
+                .access("hasAuthority('sys:permission') or hasAnyRole('ADMIN')")
 
                 //所有访问该应用的http请求都要通过身份认证才可以访问
                 .anyRequest().authenticated()

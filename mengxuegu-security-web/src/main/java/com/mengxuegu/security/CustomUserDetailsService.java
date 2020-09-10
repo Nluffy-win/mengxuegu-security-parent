@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 /**
  * 查询数据库中的用户信息
  * Created by Y_Coffee on 2020/8/21
+ *
  * @author CoffeeY
  */
 @Slf4j
@@ -31,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         log.info("请求认证的的用户名：" + username);
 
         // 1. 通过请求的用户名去数据库中查询用户信息
-        if (!"zhaojie".equalsIgnoreCase(username)){
+        if (!"zhaojie".equalsIgnoreCase(username)) {
             throw new UsernameNotFoundException("用户名或者密码错误");
         }
 
@@ -43,7 +44,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 3. 封装用户信息和权限信息
         // username 用户名, password 是数据库中这个用户存储的密码,
         // authorities 是权限资源标识, springsecurity会自动的判断用户是否合法,
-        return new User(username,password,
-                AuthorityUtils.commaSeparatedStringToAuthorityList("ADMIN"));
+        String authorityString = "sys:user,sys:role,ROLE_ADMIN";
+        return new User(username, password,
+                AuthorityUtils.commaSeparatedStringToAuthorityList(authorityString));
     }
 }
