@@ -2,7 +2,7 @@ server:
   port: 8080
   servlet:
     session:
-      timeout: 10m # 设置会话有效时长，不写默认30分钟，最低1分钟,如果低于1分钟默认1分钟
+      timeout: 30m # 设置会话有效时长，不写默认30分钟，最低1分钟,如果低于1分钟默认1分钟
       cookie:
         name: JSESSIONID #指定cook在浏览器的名称
 
