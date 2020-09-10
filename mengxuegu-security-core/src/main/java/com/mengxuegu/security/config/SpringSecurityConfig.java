@@ -3,12 +3,13 @@ package com.mengxuegu.security.config;
 import com.mengxuegu.security.authentication.code.ImageCodeValidateFilter;
 import com.mengxuegu.security.authentication.mobile.MobileAuthenticationConfig;
 import com.mengxuegu.security.authentication.mobile.MobileValidateFilter;
+import com.mengxuegu.security.authorize.manager.AuthorizeConfigurerManager;
 import com.mengxuegu.security.properties.AuthenticationProperties;
 import com.mengxuegu.security.properties.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,6 +36,7 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
 @Slf4j
 @Configuration
 @EnableWebSecurity  // 开启springsecurity过滤链 filter
+@EnableGlobalMethodSecurity(prePostEnabled = true)  //开启注解方法级权限控制
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SecurityProperties securityProperties;
@@ -51,6 +53,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final LogoutHandler CustomLogoutHandler;
     private final SessionRegistry sessionRegistry;
     private final LogoutHandler customLogoutHandler;
+    private final AuthorizeConfigurerManager authorizeConfigurerManager;
 
     public SpringSecurityConfig(SecurityProperties securityProperties,
                                 PasswordEncoder passwordEncoder,
@@ -63,7 +66,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                                 MobileAuthenticationConfig mobileAuthenticationConfig,
                                 InvalidSessionStrategy invalidSessionStrategy,
                                 SessionInformationExpiredStrategy sessionInformationExpiredStrategy,
-                                LogoutHandler customLogoutHandler, SessionRegistry sessionRegistry, LogoutHandler customLogoutHandler1) {
+                                LogoutHandler customLogoutHandler, SessionRegistry sessionRegistry,
+                                LogoutHandler customLogoutHandler1,
+                                AuthorizeConfigurerManager authorizeConfigurerManager) {
         this.securityProperties = securityProperties;
         this.passwordEncoder = passwordEncoder;
         this.customUserDetailsService = customUserDetailsService;
@@ -78,6 +83,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         this.CustomLogoutHandler = customLogoutHandler;
         this.sessionRegistry = sessionRegistry;
         this.customLogoutHandler = customLogoutHandler1;
+        this.authorizeConfigurerManager = authorizeConfigurerManager;
     }
 
 
@@ -148,27 +154,27 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 //失败返回的认证信息
                 .failureHandler(customAuthenticationFailHandler)
 
-                .and()
-
-                // 认证请求
-                .authorizeRequests()
-
-                // 放行/login/page不需要认证可访问
-                .antMatchers(authentication.getLoginPage(),
-                        authentication.getCodeImage(),
-                        authentication.getMobilePage(),
-                        authentication.getCodeMobile()).permitAll()
-
-                //匹配路径需要有什么类型权限访问
-                .antMatchers("/user").hasAuthority("sys:user")
-                //匹配路径，请求方式，有什么权限可以访问
-                .antMatchers(HttpMethod.GET,"/role").hasAuthority("sys:role")
-                //匹配路径，包含哪一种权限之一就可以访问，hasAnyRole系统默认加ROLE_,所以权限也需要加ROLE，hasAuthority不会加
-                .antMatchers("/permission")
-                .access("hasAuthority('sys:permission') or hasAnyRole('ADMIN')")
-
-                //所有访问该应用的http请求都要通过身份认证才可以访问
-                .anyRequest().authenticated()
+//                .and()
+//
+//                // 认证请求
+//                .authorizeRequests()
+//
+//                // 放行/login/page不需要认证可访问
+//                .antMatchers(authentication.getLoginPage(),
+//                        authentication.getCodeImage(),
+//                        authentication.getMobilePage(),
+//                        authentication.getCodeMobile()).permitAll()
+//
+//                //匹配路径需要有什么类型权限访问
+//                .antMatchers("/user").hasAuthority("sys:user")
+//                //匹配路径，请求方式，有什么权限可以访问
+//                .antMatchers(HttpMethod.GET, "/role").hasAuthority("sys:role")
+//                //匹配路径，包含哪一种权限之一就可以访问，hasAnyRole系统默认加ROLE_,所以权限也需要加ROLE，hasAuthority不会加
+//                .antMatchers("/permission")
+//                .access("hasAuthority('sys:permission') or hasAnyRole('ADMIN')")
+//
+//                //所有访问该应用的http请求都要通过身份认证才可以访问
+//                .anyRequest().authenticated()
 
                 .and()
 
@@ -225,6 +231,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         //将手机验证添加到过滤连上
         http.apply(mobileAuthenticationConfig);
+
+        //权限相关配置的管理者，将所有权限管理
+        authorizeConfigurerManager.configure(http.authorizeRequests());
     }
 
     /**
