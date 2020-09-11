@@ -44,7 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 3. 封装用户信息和权限信息
         // username 用户名, password 是数据库中这个用户存储的密码,
         // authorities 是权限资源标识, springsecurity会自动的判断用户是否合法,
-        String authorityString = "sys:user,sys:role,ROLE_ADMIN";
+        String authorityString = "sys:user,sys:role,ROLE_ADMIN,sys:user:add";
         return new User(username, password,
                 AuthorityUtils.commaSeparatedStringToAuthorityList(authorityString));
     }
