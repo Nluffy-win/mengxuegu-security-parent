@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 /**
+ * 登录错误提示码转中文
  * Created by Y_Coffee on 2020/8/21
  *
  * @author CoffeeY

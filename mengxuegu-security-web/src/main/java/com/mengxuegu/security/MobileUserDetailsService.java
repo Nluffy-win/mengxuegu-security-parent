@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 /**
- * 手机号查询
+ * 手机号查询用户的信息
  * Created by Y_Coffee on 2020/8/27
  *
  * @author CoffeeY

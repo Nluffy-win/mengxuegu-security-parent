@@ -2,19 +2,31 @@ server:
   port: 8080
   servlet:
     session:
-      timeout: 10m  # 设置会话有效时长，不写默认30分钟，最低1分钟,如果低于1分钟默认1分钟
+      timeout: 30m # 设置会话有效时长，不写默认30分钟，最低1分钟,如果低于1分钟默认1分钟
+      cookie:
+        name: JSESSIONID #指定cook在浏览器的名称
 
 spring:
   thymeleaf:
     cache: false #关闭thymeleaf缓存
   datasource:
+    #mysql8版本以上驱动包指定新的驱动类
     driver-class-name: com.mysql.cj.jdbc.Driver
     #url: jdbc:mysql://192.168.1.47/user_center?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&autoReconnect=true&failOverReadOnly=false
     url: jdbc:mysql://127.0.0.1:3306/security?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&autoReconnect=true&failOverReadOnly=false
     username: root
     password: root
+    #数据源其他配置, 在 DruidConfig配置类中手动绑定
+    initialSize: 8
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+
   session:
-    store-type: redis # 采用redis存session
+    store-type: none # 采用redis存session,none不采用
   redis:
     port: 6379 # redis端口号
 
@@ -35,3 +47,13 @@ mengxuegu:
       codeMobile: /code/mobile # 发送验证码
       mobileForm: /mobile/form  # 提交手机验证码页面的登录按钮
       tokenValiditySeconds: 604800 # 记住我的有效时长
+      userLogout: /user/logout # 退出的路径
+
+mybatis-plus:
+  #指定实体类所有包名
+  type-aliases-package: com.mengxuegu.web.entities
+
+#日志级别，会打印sql语句
+logging:
+  level:
+    com.mengxuegu.web.mapper: debug

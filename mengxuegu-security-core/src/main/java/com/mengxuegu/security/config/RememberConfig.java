@@ -7,6 +7,7 @@ import org.springframework.security.web.authentication.rememberme.JdbcTokenRepos
 import javax.sql.DataSource;
 
 /**
+ * 记住我功能
  * Created by Y_Coffee on 2020/8/24
  * @author CoffeeY
  */
