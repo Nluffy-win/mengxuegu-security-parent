@@ -18,7 +18,7 @@ import java.util.List;
  * @author CoffeeY
  */
 @Data
-public class SysUser implements UserDetails {
+public class SysUser implements UserDetails{
 
     /**
      * 主键自增长
@@ -30,10 +30,10 @@ public class SysUser implements UserDetails {
      * 密码需要加密后存储
      */
     private String password;
-    private boolean isAccountNonExpired;
-    private boolean isAccountNonLocked;
-    private boolean isCredentialsNonExpired;
-    private boolean isEnabled;
+    private boolean isAccountNonExpired = true;
+    private boolean isAccountNonLocked = true;
+    private boolean isCredentialsNonExpired = true;
+    private boolean isEnabled = true;
     private String nickName;
     private String mobile;
     private String email;

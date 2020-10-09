@@ -10,4 +10,12 @@ import com.mengxuegu.web.entities.SysUser;
  * @author CoffeeY
  */
 public interface SysUserService extends IService<SysUser> {
+
+    /**
+     * 根据用户名查询
+     * @return
+     */
+    SysUser findByUsername(String username);
+    SysUser findUsername(String username);
+
 }
