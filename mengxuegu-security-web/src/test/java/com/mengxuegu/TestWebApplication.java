@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 /**
  * Created by Y_Coffee on 2020/9/14
  */
@@ -57,6 +59,12 @@ public class TestWebApplication {
     public void testSysPermission(){
         SysPermission permission = sysPermissionService.getById(18);
         System.out.println(permission);
+    }
+
+    @Test
+    public void testSysPermissions(){
+        List<SysPermission> byID = sysPermissionService.findByID(20);
+        System.out.println(byID.size());
     }
 
 }
