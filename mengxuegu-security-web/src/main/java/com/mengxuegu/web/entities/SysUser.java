@@ -73,5 +73,5 @@ public class SysUser implements UserDetails{
      * 封装当前用户拥有的权限资源对象
      */
     @TableField(exist = false)
-    private List<SysPermission> permissionList;
+    private List<SysPermission> permissions;
 }
