@@ -22,7 +22,7 @@ import java.util.List;
 public abstract class AbstractUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private SysPermissionService sysPermissionService;
+    SysPermissionService sysPermissionService;
 
     /**
      * 将方法交给子类去查询用户名密码，手机号
