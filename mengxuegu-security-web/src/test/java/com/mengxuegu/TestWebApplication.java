@@ -34,7 +34,7 @@ public class TestWebApplication {
 
     @Test
     public void testSysUser1() {
-        SysUser admin = sysUserService.findUsername("admin");
+        SysUser admin = sysUserService.findByMobile("admin");
         System.out.println(admin);
     }
 

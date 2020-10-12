@@ -26,12 +26,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public SysUser findUsername(String username) {
-        if (StringUtils.isEmpty(username)) {
-            return new SysUser();
+    public SysUser findByMobile(String mobile) {
+        if (StringUtils.isEmpty(mobile)) {
+            return null;
         }
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("username", username);
+        queryWrapper.eq("mobile", mobile);
         SysUser user = baseMapper.selectOne(queryWrapper);
         return user;
     }

@@ -16,6 +16,11 @@ public interface SysUserService extends IService<SysUser> {
      * @return
      */
     SysUser findByUsername(String username);
-    SysUser findUsername(String username);
+
+    /**
+     * 根据手机号码查询
+     * @return
+     */
+    SysUser findByMobile(String mobile);
 
 }
