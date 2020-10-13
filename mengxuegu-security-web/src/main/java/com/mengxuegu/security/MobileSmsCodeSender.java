@@ -1,19 +1,19 @@
 package com.mengxuegu.security;
 
 import com.mengxuegu.security.authentication.mobile.SmsSend;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Created by Y_Coffee on 2020/8/24
- *
- * @author CoffeeY
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
-@Slf4j
+//@Component
 public class MobileSmsCodeSender implements SmsSend {
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
     public boolean sendSms(String mobile, String content) {
-        log.info("Web应用新的短信验证码接口---向手机号" + mobile + "发送了验证码为：" + content);
-
+        logger.info("Web应用新的短信验证码接口---向手机号"+mobile+"发送了验证码为：" + content);
         return false;
     }
 }

@@ -6,16 +6,23 @@ import com.mengxuegu.web.entities.SysPermission;
 import java.util.List;
 
 /**
- * Created by Y_Coffee on 2020/9/15
- * @author CoffeeY
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 public interface SysPermissionService extends IService<SysPermission> {
 
     /**
-     * 根据id查询
+     * 通过用户id查询所拥有权限
      * @param userId
      * @return
      */
-    List<SysPermission> findByID(Integer userId);
+    List<SysPermission> findByUserId(Long userId);
+
+
+    /**
+     * 通过权限id删除权限资源
+     * @param id
+     * @return
+     */
+    boolean deleteById(Long id);
 
 }

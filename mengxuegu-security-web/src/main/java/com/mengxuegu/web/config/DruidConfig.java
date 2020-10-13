@@ -8,17 +8,17 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 /**
- * Created by Y_Coffee on 2020/9/14
- *
- * @author CoffeeY
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Configuration
 public class DruidConfig {
 
+
     @ConfigurationProperties(prefix = "spring.datasource")
     @Bean
-    public DataSource druid() {
+    public DataSource dataSource() {
         return new DruidDataSource();
     }
+
 
 }

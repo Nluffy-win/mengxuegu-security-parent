@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 /**
- * Created by Y_Coffee on 2020/9/14
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -28,43 +28,31 @@ public class TestWebApplication {
     public void testSysUser() {
 //        List<SysUser> list = sysUserService.list();
 //        System.out.println("list:" + list);
-        SysUser admin = sysUserService.findByUsername("admin");
-        System.out.println(admin);
+
+        SysUser user = sysUserService.findByUsername("admin");
+        System.out.println("user: " + user);
     }
 
-    @Test
-    public void testSysUser1() {
-        SysUser admin = sysUserService.findByMobile("admin");
-        System.out.println(admin);
-    }
-
-    @Test
-    public void test111() {
-        System.out.println("************");
-    }
 
     @Autowired
     SysRoleService sysRoleService;
 
     @Test
-    public void testSysRole() {
+    public void testSysRole(){
         SysRole role = sysRoleService.getById(9);
-        System.out.println(role);
+        System.out.println("role:" + role);
     }
 
     @Autowired
     SysPermissionService sysPermissionService;
 
     @Test
-    public void testSysPermission(){
-        SysPermission permission = sysPermissionService.getById(18);
-        System.out.println(permission);
+    public void testSysPer(){
+//        SysPermission permission = sysPermissionService.getById(18);
+//        System.out.println(permission);
+        List<SysPermission> permissions = sysPermissionService.findByUserId(9L);
+        System.out.println("permissions:" + permissions.size());
     }
 
-    @Test
-    public void testSysPermissions(){
-        List<SysPermission> byID = sysPermissionService.findByID(20);
-        System.out.println(byID.size());
-    }
 
 }

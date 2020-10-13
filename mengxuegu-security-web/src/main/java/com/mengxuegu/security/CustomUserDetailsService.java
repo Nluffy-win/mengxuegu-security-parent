@@ -2,35 +2,32 @@ package com.mengxuegu.security;
 
 import com.mengxuegu.web.entities.SysUser;
 import com.mengxuegu.web.service.SysUserService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
  * 查询数据库中的用户信息
- * Created by Y_Coffee on 2020/8/21
- *
- * @author CoffeeY
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
-@Slf4j
 @Component("customUserDetailsService")
-public class CustomUserDetailsService extends AbstractUserDetailsService {
+//public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService extends AbstractUserDetailsService{
+    Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * 必须有password不然报错
-     */
-    private final PasswordEncoder passwordEncoder;
-    private final SysUserService sysUserService;
+    @Autowired // 不能删掉，不然报错
+    PasswordEncoder passwordEncoder;
 
-    public CustomUserDetailsService(PasswordEncoder passwordEncoder, SysUserService sysUserService) {
-        this.passwordEncoder = passwordEncoder;
-        this.sysUserService = sysUserService;
-    }
+    @Autowired
+    SysUserService sysUserService;
 
 
     @Override
     public SysUser findSysUser(String usernameOrMobile) {
-        log.info("请求认证的的用户名：" + usernameOrMobile);
+        logger.info("请求认证的用户名: " + usernameOrMobile);
+        // 1. 通过请求的用户名去数据库中查询用户信息
         return sysUserService.findByUsername(usernameOrMobile);
     }
 

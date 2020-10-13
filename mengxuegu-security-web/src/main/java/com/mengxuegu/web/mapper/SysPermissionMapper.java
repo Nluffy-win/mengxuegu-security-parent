@@ -7,16 +7,14 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * Created by Y_Coffee on 2020/9/15
- * @author CoffeeY
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 public interface SysPermissionMapper extends BaseMapper<SysPermission> {
 
-    /**
-     * 根据id查询对应权限
-     * @param userId
-     * @return
-     */
-    List<SysPermission> selectPermissionByUserId(@Param("userId") Integer userId);
+
+    List<SysPermission> selectPermissionByUserId(@Param("userId") Long userId);
+
+    List<SysPermission> findByRoleId(@Param("roleId") Long roleId);
+
 
 }

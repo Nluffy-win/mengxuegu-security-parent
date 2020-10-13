@@ -4,23 +4,22 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.mengxuegu.web.entities.SysUser;
 
 /**
- * IService<T> 提供了对T表操作的很多抽象方法，比如：批量操作
- * Created by Y_Coffee on 2020/9/14
- *
- * @author CoffeeY
+ * IService<T> 提供了对T表操作的很多抽象方法，比如：批量操作，
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 public interface SysUserService extends IService<SysUser> {
 
     /**
-     * 根据用户名查询
+     * 通过用户名查询用户信息
+     * @param username 用户名
      * @return
      */
-    SysUser findByUsername(String username);
+    SysUser findByUsername(String username) ;
 
     /**
-     * 根据手机号码查询
+     * 通过手机号查询用户信息
+     * @param mobile 手机号
      * @return
      */
     SysUser findByMobile(String mobile);
-
 }

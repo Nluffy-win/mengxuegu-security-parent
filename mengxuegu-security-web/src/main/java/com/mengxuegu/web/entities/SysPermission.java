@@ -5,24 +5,25 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Y_Coffee on 2020/9/14
- *
- * @author CoffeeY
+ * 权限实体类
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Data
-public class SysPermission {
+public class SysPermission implements Serializable {
+
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     /**
      * 父资源id,给它初始值 0
      * 新增和修改页面上默认的父资源id
      */
-    private Integer parentId = 0;
+    private Long parentId = 0L ;
     /**
      * 用于新增和修改页面上默认的根菜单名称
      */
