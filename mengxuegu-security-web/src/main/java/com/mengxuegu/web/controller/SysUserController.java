@@ -4,6 +4,7 @@ import com.mengxuegu.base.result.MengxueguResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.access.prepost.PreFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,14 +27,14 @@ public class SysUserController {
 
     private static final String HTML_PREFIX = "/system/user/";
 
-    //@PreAuthorize("hasAuthority('sys:user')")
+    @PreAuthorize("hasAuthority('sys:user')")
     @GetMapping(value = {"/", ""})
     public String user() {
         String user = HTML_PREFIX + "user-list";
         return user;
     }
 
-    //@PreAuthorize("hasAnyAuthority('sys:user:add','sys:user:edit')")
+    @PreAuthorize("hasAnyAuthority('sys:user:add','sys:user:edit')")
     @GetMapping("/form")
     public String form() {
         String form = HTML_PREFIX + "user-form";
@@ -51,7 +52,7 @@ public class SysUserController {
     @ResponseBody
     public MengxueguResult deleteId(@PathVariable("id") Integer id) {
 
-        if (0 >= id) {
+        if (id < 0) {
             return MengxueguResult.build(500, "参数不能小于0");
         }
         return MengxueguResult.ok();

@@ -87,6 +87,7 @@ $(function() {
                 '<ul class="dropdown-menu dropdown-menu-right" role="menu">');
 
             getOperationHtml(operationHtml, row);
+
             // operationHtml.push('<li><a class="dropdown-item btn btn-primary"><i class="fa fa-edit"></i>&nbsp;修改</a></li>')
             // operationHtml.push('<li><a class="dropdown-item btn btn-primary"><i class="fa fa-trash"></i>&nbsp;删除</a></li>')
 
