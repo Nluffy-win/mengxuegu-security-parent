@@ -3,7 +3,6 @@ package com.mengxuegu.web.controller;
 import com.mengxuegu.base.result.MengxueguResult;
 import com.mengxuegu.web.entities.SysPermission;
 import com.mengxuegu.web.service.SysPermissionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +22,12 @@ public class SysPermissionController {
 
     private static final String HTML_PREFIX = "/system/permission/";
 
+    private final SysPermissionService sysPermissionService;
+
+    public SysPermissionController(SysPermissionService sysPermissionService) {
+        this.sysPermissionService = sysPermissionService;
+    }
+
     //@PreAuthorize("hasAuthority('sys:permission')")
     @GetMapping(value = {"/", ""})
     public String permission() {
@@ -30,8 +35,7 @@ public class SysPermissionController {
         return permission;
     }
 
-    @Autowired
-    private SysPermissionService sysPermissionService;
+
 
     //@PreAuthorize("hasAuthority('sys:permission:list')")
     @PostMapping("/list") // /permission/list
