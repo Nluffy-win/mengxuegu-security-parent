@@ -1,39 +1,28 @@
 package com.mengxuegu.security.authentication.mobile;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Component;
 
 /**
- * 手机认证处理的提供者
- * Created by Y_Coffee on 2020/8/26
- *
- * @author CoffeeY
+ * 手机认证处理提供者
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
-@Slf4j
-@Component("mobileAuthenticationProvider")
 public class MobileAuthenticationProvider implements AuthenticationProvider {
 
     private UserDetailsService userDetailsService;
-
-    public UserDetailsService getUserDetailsService() {
-        return userDetailsService;
-    }
 
     public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
     /**
-     * 认证处理
-     * 1.通过手机号码查询用户信息(userDetailsService去实现)
-     * 2.查询到用户信息，则认为通过，封装authentication信息
-     *
+     * 认证处理:
+     *  1. 通过手机号码 查询用户信息( UserDetailsService实现)
+     *  2. 当查询到用户信息, 则认为认证通过,封装Authentication对象
      * @param authentication
      * @return
      * @throws AuthenticationException
@@ -41,34 +30,30 @@ public class MobileAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MobileAuthenticationToken mobileAuthenticationToken =
-                (MobileAuthenticationToken) authentication;
-        //获取手机号
-        String mobile = (String) mobileAuthenticationToken.getPrincipal();
+                (MobileAuthenticationToken)authentication;
+        // 获取手机号码
+        String mobile = (String)mobileAuthenticationToken.getPrincipal();
+        // 通过 手机号码 查询用户信息( UserDetailsService实现)
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(mobile);
 
-        //通过手机号码查询用户信息(userDetailsService去实现)
-        //user里面装用户所有信息
-        UserDetails user = userDetailsService.loadUserByUsername(mobile);
-        if (null == user) {
-            //因为AuthenticationException是抽象类方法，不能new，使用子类
-            throw new AuthenticationServiceException("手机号码尚未注册");
+        // 未查询到用户信息
+        if(userDetails == null) {
+            throw new AuthenticationServiceException("该手机号未注册");
         }
 
-        //查询到了，封装进MobileAuthenticationToken
+        // 认证通过
+        // 封装到 MobileAuthenticationToken
         MobileAuthenticationToken authenticationToken =
-                new MobileAuthenticationToken(user, user.getAuthorities());
-        //存入session，token
+                new MobileAuthenticationToken(userDetails, userDetails.getAuthorities());
         authenticationToken.setDetails(mobileAuthenticationToken.getDetails());
-        log.info("完整的用户信息" + authenticationToken);
-        log.info("setDetails信息：" + mobileAuthenticationToken.getDetails());
+        //最终返回认证信息
         return authenticationToken;
     }
 
     /**
-     * 第一步
-     * 通过这个方法调用对应的provider提供者
-     * 返回true调用MobileAuthenticationProvider，false返回别的provider
-     *
-     * @param authentication 权限
+     * 通过这个方法,来选择对应的Provider, 即选择MobileAuthenticationProivder
+     * @param authentication
      * @return
      */
     @Override

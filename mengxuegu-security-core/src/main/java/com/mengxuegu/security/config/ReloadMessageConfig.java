@@ -1,27 +1,22 @@
 package com.mengxuegu.security.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 /**
- * 登录错误提示码转中文
- * Created by Y_Coffee on 2020/8/21
- *
- * @author CoffeeY
+ * 加载认证信息配置类
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Configuration
-@Slf4j
 public class ReloadMessageConfig {
 
-    @Bean
+    @Bean // 加载中文的认证提示信息
     public ReloadableResourceBundleMessageSource messageSource() {
-
-        //配置中文的信息
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        //.properties 不要加到后面
+//        messageSource.setBasename("classpath:org/springframework/security/messages_zh_CN");
         messageSource.setBasename("classpath:messages_zh_CN");
-        log.info("调用：" + messageSource);
         return messageSource;
     }
 }

@@ -1,9 +1,12 @@
 package com.mengxuegu.security.authentication;
 
+import com.alibaba.fastjson.JSON;
 import com.mengxuegu.base.result.MengxueguResult;
-import com.mengxuegu.security.properties.LoginResponseType;
-import com.mengxuegu.security.properties.SecurityProperties;
-import lombok.extern.slf4j.Slf4j;
+import com.mengxuegu.security.properites.LoginResponseType;
+import com.mengxuegu.security.properites.SecurityProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -14,38 +17,32 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by Y_Coffee on 2020/8/21
- *
- * @author CoffeeY
+ * 认证成功处理器
+ * 1. 决定 响应json还是跳转页面，或者认证成功后进行其他处理
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
-@Slf4j
 @Component("customAuthenticationSuccessHandler")
-//public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler
+//public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-
-    private final SecurityProperties securityProperties;
-
-    public CustomAuthenticationSuccessHandler(SecurityProperties securityProperties) {
-        this.securityProperties = securityProperties;
-    }
+    Logger logger = LoggerFactory.getLogger(getClass());
+    @Autowired
+    SecurityProperties securityProperties;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        if (LoginResponseType.JSON.equals(securityProperties.getAuthentication().getLoginType())) {
+        HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        
+        if(LoginResponseType.JSON.equals(
+                    securityProperties.getAuthentication().getLoginType())) {
+            // 认证成功后，响应JSON字符串
             MengxueguResult result = MengxueguResult.ok("认证成功");
-            log.info("成功认证转换之前：" + result);
-            log.info("authentication:" + authentication);
             response.setContentType("application/json;charset=UTF-8");
-            log.info("成功认证转换之后：" + request);
-            String json = result.toJsonString();
-            response.getWriter().write(json);
-        } else {
-            log.info("重定向后的数据：" + request + "----" + response + "----" + authentication);
-            log.info("authentication转换后的数据：" + authentication);
+            response.getWriter().write(result.toJsonString());
+        }else {
+            //重定向到上次请求的地址上，引发跳转到认证页面的地址
+            logger.info("authentication: " + JSON.toJSONString(authentication));
             super.onAuthenticationSuccess(request, response, authentication);
         }
-
 
     }
 }

@@ -13,31 +13,22 @@ import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 /**
- * Created by Y_Coffee on 2020/8/24
- *
- * @author CoffeeY
+ * 主要为容器中添加Bean实例
+ * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Configuration
 public class SecurityConfigBean {
 
-    /**
-     * 当session超过最大设置数处理
-     *
-     * @return
-     * @ConditionalOnMissingBean(SmsSend.class) 默认采用SmsCodeSender实例，但是如果bean容器有其他smssend类型实例，则当前实例失效
-     */
-    @Bean
-    @ConditionalOnMissingBean(SmsSend.class)
-    public SmsSend smsSend() {
-        return new SmsCodeSender();
-    }
 
+    @Bean
+    @ConditionalOnMissingBean(SessionInformationExpiredStrategy.class)
+    public SessionInformationExpiredStrategy sessionInformationExpiredStrategy() {
+        return new CustomSessionInformationExpiredStrategy();
+    }
     /**
      * 当session失效后的处理类
-     *
      * @return
      */
-
     @Autowired
     private SessionRegistry sessionRegistry;
 
@@ -47,9 +38,18 @@ public class SecurityConfigBean {
         return new CustomInvalidSessionStrategy(sessionRegistry);
     }
 
+    /**
+     * @ConditionalOnMissingBean(SmsSend.class)
+     * 默认情况下，采用的是SmsCodeSender实例 ，
+     * 但是如果容器当中有其他的SmsSend类型的实例，
+     * 那当前的这个SmsCodeSender就失效 了
+     * @return
+     */
     @Bean
-    @ConditionalOnMissingBean(SessionInformationExpiredStrategy.class)
-    public SessionInformationExpiredStrategy sessionInformationExpiredStrategy() {
-        return new CustomSessionInformationExpiredStrategy();
+    @ConditionalOnMissingBean(SmsSend.class)
+    public SmsSend smsSend() {
+        return new SmsCodeSender();
     }
+
+
 }

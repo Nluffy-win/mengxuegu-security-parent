@@ -1,4 +1,4 @@
-package com.mengxuegu.security.Controller;
+package com.mengxuegu.security.controller;
 
 import com.mengxuegu.base.result.MengxueguResult;
 import com.mengxuegu.security.authentication.mobile.SmsSend;

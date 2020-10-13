@@ -1,11 +1,11 @@
 package com.mengxuegu.security.authentication.code;
 
-
-import com.mengxuegu.security.Controller.CustomLoginController;
-import com.mengxuegu.security.authentication.CustomAuthenticationFailHandler;
+import com.mengxuegu.security.authentication.CustomAuthenticationFailureHandler;
 import com.mengxuegu.security.authentication.exception.ValidateCodeException;
-import com.mengxuegu.security.properties.SecurityProperties;
+import com.mengxuegu.security.controller.CustomLoginController;
+import com.mengxuegu.security.properites.SecurityProperties;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,22 +18,16 @@ import java.io.IOException;
 
 /**
  * OncePerRequestFilter: 所有请求之前被调用一次
- * @author CoffeeY
  * @Auther: 梦学谷 www.mengxuegu.com
  */
 @Component("imageCodeValidateFilter")
 public class ImageCodeValidateFilter extends OncePerRequestFilter {
 
-    private final SecurityProperties securityProperties;
+    @Autowired
+    SecurityProperties securityProperties;
 
-    private final CustomAuthenticationFailHandler customAuthenticationFailHandler;
-
-    public ImageCodeValidateFilter(SecurityProperties securityProperties,
-                                   CustomAuthenticationFailHandler customAuthenticationFailHandler) {
-        this.securityProperties = securityProperties;
-        this.customAuthenticationFailHandler = customAuthenticationFailHandler;
-    }
-
+    @Autowired
+    CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
     @Override
     protected void doFilterInternal(HttpServletRequest request,
           HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -46,7 +40,7 @@ public class ImageCodeValidateFilter extends OncePerRequestFilter {
                validate(request);
            }catch (AuthenticationException e) {
                // 交给失败处理器进行处理异常
-               customAuthenticationFailHandler.onAuthenticationFailure(request, response, e);
+               customAuthenticationFailureHandler.onAuthenticationFailure(request, response, e);
                // 一定要记得结束
                return;
            }
