@@ -4,7 +4,7 @@
 
 <mapper namespace="com.mengxuegu.web.mapper.SysRoleMapper">
 
-    <select id="selectPage" resultType="SysRole">
+    <select id="selectPage" resultType="com.mengxuegu.web.entities.SysRole">
         SELECT
             `id`,
             `name`,

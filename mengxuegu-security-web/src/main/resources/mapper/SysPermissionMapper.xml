@@ -4,7 +4,7 @@
 
 <mapper namespace="com.mengxuegu.web.mapper.SysPermissionMapper">
 
-    <select id="selectPermissionByUserId" resultType="SysPermission">
+    <select id="selectPermissionByUserId" resultType="com.mengxuegu.web.entities.SysPermission">
       SELECT DISTINCT
             p.id,
             p.parent_id,
@@ -26,7 +26,7 @@
             u.id = #{userId}
     </select>
     
-    <select id="findByRoleId" resultType="SysPermission">
+    <select id="findByRoleId" resultType="com.mengxuegu.web.entities.SysPermission">
         SELECT
             DISTINCT p.*
         FROM
